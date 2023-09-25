@@ -1,6 +1,7 @@
-import  { useState } from "react";
+import { useState } from "react";
 import ReactMde from "react-mde";
 import Showdown from "showdown";
+import PropTypes from "prop-types";
 
 export default function Editor({ currentNote, updateNote }) {
   const [selectedTab, setSelectedTab] = useState("write");
@@ -28,3 +29,8 @@ export default function Editor({ currentNote, updateNote }) {
     </section>
   );
 }
+
+Editor.propTypes = {
+  updateNote: PropTypes.func,
+  currentNote: PropTypes.object,
+};

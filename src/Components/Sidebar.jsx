@@ -1,3 +1,5 @@
+import PropTypes from "prop-types"
+
 export default function Sidebar(props) {
   const noteElements = props.notes.map((note, index) => (
     <div key={note.id}>
@@ -24,3 +26,10 @@ export default function Sidebar(props) {
     </section>
   );
 }
+
+Sidebar.propTypes = {
+  notes: PropTypes.array,
+  setCurrentNoteId: PropTypes.func,
+  currentNote: PropTypes.object,
+  newNote: PropTypes.func,
+};
