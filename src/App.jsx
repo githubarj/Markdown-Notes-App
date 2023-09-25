@@ -17,6 +17,13 @@ export default function App() {
     localStorage.setItem("mynotes", JSON.stringify(notes));
   }, [notes]);
 
+     function deleteNote(e, noteId) {
+       e.stopPropagation();
+       setNotes((prev) => {
+         return prev.filter((item) => item.id !== noteId);
+       });
+     }
+
   function createNewNote() {
     const newNote = {
       id: nanoid(),
@@ -66,6 +73,7 @@ export default function App() {
             currentNote={findCurrentNote()}
             setCurrentNoteId={setCurrentNoteId}
             newNote={createNewNote}
+            delete = {deleteNote}
           />
           {currentNoteId && notes.length > 0 && (
             <Editor currentNote={findCurrentNote()} updateNote={updateNote} />
