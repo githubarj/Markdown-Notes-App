@@ -7,15 +7,15 @@ import "./App.css";
 
 export default function App() {
   const [notes, setNotes] = useState(
-   ()=> JSON.parse(localStorage.getItem("mynotes")) || [] //lazy state, only initialized once, and not on every app rerender
+    () => JSON.parse(localStorage.getItem("mynotes")) || [] //lazy state, only initialized once, and not on every app rerender
   );
   const [currentNoteId, setCurrentNoteId] = useState(
     (notes[0] && notes[0].id) || ""
   );
 
-   useEffect(() => {
-     localStorage.setItem("mynotes", JSON.stringify(notes));
-   }, [notes]);
+  useEffect(() => {
+    localStorage.setItem("mynotes", JSON.stringify(notes));
+  }, [notes]);
 
   function createNewNote() {
     const newNote = {
@@ -27,15 +27,28 @@ export default function App() {
   }
 
   function updateNote(text) {
-    setNotes((oldNotes) =>
-      oldNotes.map((oldNote) => {
-        return oldNote.id === currentNoteId
-          ? { ...oldNote, body: text }
-          : oldNote;
-      })
-    );
-  }
+    // Try to rearrange the most recently-modified
+    // not to be at the top
+    setNotes((oldNotes) => {
+      const newArray = [];
+      for (let i = 0; i < oldNotes.length; i++) {
+        const oldNote = oldNotes[i];
+        if (oldNote.id === currentNoteId) {
+          newArray.unshift({ ...oldNote, body: text });
+        } else {
+          newArray.push(oldNote);
+        }
+      }
+      return newArray;
+    });
 
+    // This does not rearrange the notes
+    // setNotes(oldNotes => oldNotes.map(oldNote => {
+    //     return oldNote.id === currentNoteId
+    //         ? { ...oldNote, body: text }
+    //         : oldNote
+    // }))
+  }
   function findCurrentNote() {
     return (
       notes.find((note) => {
@@ -43,8 +56,6 @@ export default function App() {
       }) || notes[0]
     );
   }
-
- 
 
   return (
     <main>
