@@ -9,20 +9,20 @@ export default function App() {
   const [notes, setNotes] = useState(
     () => JSON.parse(localStorage.getItem("mynotes")) || [] //lazy state, only initialized once, and not on every app rerender
   );
-  const [currentNoteId, setCurrentNoteId] = useState(
-    (notes[0] && notes[0].id) || ""
-  );
+  const [currentNoteId, setCurrentNoteId] = useState(notes[0]?.id || "");
+  const currentNote =
+    notes.find((note) => note.id === currentNoteId) || notes[0];
 
   useEffect(() => {
     localStorage.setItem("mynotes", JSON.stringify(notes));
   }, [notes]);
 
-     function deleteNote(e, noteId) {
-       e.stopPropagation();
-       setNotes((prev) => {
-         return prev.filter((item) => item.id !== noteId);
-       });
-     }
+  function deleteNote(e, noteId) {
+    e.stopPropagation();
+    setNotes((prev) => {
+      return prev.filter((item) => item.id !== noteId);
+    });
+  }
 
   function createNewNote() {
     const newNote = {
@@ -56,13 +56,6 @@ export default function App() {
     //         : oldNote
     // }))
   }
-  function findCurrentNote() {
-    return (
-      notes.find((note) => {
-        return note.id === currentNoteId;
-      }) || notes[0]
-    );
-  }
 
   return (
     <main>
@@ -70,13 +63,13 @@ export default function App() {
         <Split sizes={[30, 70]} direction="horizontal" className="split">
           <Sidebar
             notes={notes}
-            currentNote={findCurrentNote()}
+            currentNote={currentNote}
             setCurrentNoteId={setCurrentNoteId}
             newNote={createNewNote}
-            delete = {deleteNote}
+            deleteNote={deleteNote}
           />
           {currentNoteId && notes.length > 0 && (
-            <Editor currentNote={findCurrentNote()} updateNote={updateNote} />
+            <Editor currentNote={currentNote} updateNote={updateNote} />
           )}
         </Split>
       ) : (

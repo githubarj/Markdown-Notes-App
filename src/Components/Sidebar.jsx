@@ -12,7 +12,7 @@ export default function Sidebar(props) {
         <h4 className="text-snippet">{note.body.split("\n")[0]}</h4>
         <button
           className="delete-btn"
-          onClick={(e) => props.delete(e ,  note.id)}
+          onClick={(e) => props.deleteNote(e ,  note.id)}
         >
           <i className="gg-trash trash-icon"></i>
         </button>
@@ -38,5 +38,5 @@ Sidebar.propTypes = {
   setCurrentNoteId: PropTypes.func,
   currentNote: PropTypes.object,
   newNote: PropTypes.func,
-  delete: PropTypes.func,
+  deleteNote: PropTypes.func,
 };
