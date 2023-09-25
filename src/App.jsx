@@ -3,10 +3,12 @@ import Editor from "./Components/Editor";
 import Split from "react-split";
 import { nanoid } from "nanoid";
 import { useState } from "react";
-import "./App.css"
+import "./App.css";
 
 export default function App() {
-  const [notes, setNotes] = useState([]);
+  const [notes, setNotes] = useState(
+    JSON.parse(localStorage.getItem("mynotes")) || []
+  );
   const [currentNoteId, setCurrentNoteId] = useState(
     (notes[0] && notes[0].id) || ""
   );
@@ -17,6 +19,7 @@ export default function App() {
       body: "# Type your markdown note's title here",
     };
     setNotes((prevNotes) => [newNote, ...prevNotes]);
+    localStorage.setItem("mynotes", JSON.stringify(notes));
     setCurrentNoteId(newNote.id);
   }
 
@@ -28,6 +31,7 @@ export default function App() {
           : oldNote;
       })
     );
+    localStorage.setItem("mynotes", JSON.stringify(notes));
   }
 
   function findCurrentNote() {
