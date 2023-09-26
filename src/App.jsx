@@ -1,9 +1,8 @@
 import Sidebar from "./Components/Sidebar";
 import Editor from "./Components/Editor";
 import Split from "react-split";
-import { nanoid } from "nanoid";
 import { useEffect, useState } from "react";
-import { onSnapshot } from "firebase/firestore";
+import { onSnapshot, addDoc } from "firebase/firestore";
 import { notesCollection } from "../firebase";
 import "./App.css";
 
@@ -11,7 +10,7 @@ export default function App() {
   const [notes, setNotes] = useState([]);
 
   const [currentNoteId, setCurrentNoteId] = useState(notes[0]?.id || "");
-  
+
   const currentNote =
     notes.find((note) => note.id === currentNoteId) || notes[0];
 
@@ -27,21 +26,16 @@ export default function App() {
     return unsubscribe;
   }, []);
 
-  function deleteNote(e, noteId) {
-    e.stopPropagation();
-    setNotes((prev) => {
-      return prev.filter((item) => item.id !== noteId);
-    });
-  }
+ 
 
-  function createNewNote() {
-    const newNote = {
-      id: nanoid(),
-      body: "# Type your markdown note's title here",
-    };
-    setNotes((prevNotes) => [newNote, ...prevNotes]);
-    setCurrentNoteId(newNote.id);
-  }
+   async function createNewNote() {
+     const newNote = {
+       body: "# Type your markdown note's title here",
+     };
+     const newNoteRef = await addDoc(notesCollection, newNote);
+     setCurrentNoteId(newNoteRef.id);
+   }
+
 
   function updateNote(text) {
     // Try to rearrange the most recently-modified
@@ -66,6 +60,13 @@ export default function App() {
     //         : oldNote
     // }))
   }
+
+   function deleteNote(e, noteId) {
+     e.stopPropagation();
+     setNotes((prev) => {
+       return prev.filter((item) => item.id !== noteId);
+     });
+   }
 
   return (
     <main>
