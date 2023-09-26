@@ -9,7 +9,7 @@ import "./App.css";
 export default function App() {
   const [notes, setNotes] = useState([]);
 
-  const [currentNoteId, setCurrentNoteId] = useState(notes[0]?.id || "");
+  const [currentNoteId, setCurrentNoteId] = useState("");
 
   const currentNote =
     notes.find((note) => note.id === currentNoteId) || notes[0];
@@ -26,16 +26,19 @@ export default function App() {
     return unsubscribe;
   }, []);
 
- 
+  useEffect(() => {
+    if (!currentNoteId) {
+      setCurrentNoteId(notes[0]?.id);
+    }
+  }, [notes]);
 
-   async function createNewNote() {
-     const newNote = {
-       body: "# Type your markdown note's title here",
-     };
-     const newNoteRef = await addDoc(notesCollection, newNote);
-     setCurrentNoteId(newNoteRef.id);
-   }
-
+  async function createNewNote() {
+    const newNote = {
+      body: "# Type your markdown note's title here",
+    };
+    const newNoteRef = await addDoc(notesCollection, newNote);
+    setCurrentNoteId(newNoteRef.id);
+  }
 
   function updateNote(text) {
     // Try to rearrange the most recently-modified
@@ -61,10 +64,10 @@ export default function App() {
     // }))
   }
 
-     async function deleteNote(noteId) {
-       const docRef = doc(db, "notes", noteId);
-       await deleteDoc(docRef);
-     }
+  async function deleteNote(noteId) {
+    const docRef = doc(db, "notes", noteId);
+    await deleteDoc(docRef);
+  }
 
   return (
     <main>
@@ -77,9 +80,7 @@ export default function App() {
             newNote={createNewNote}
             deleteNote={deleteNote}
           />
-          {currentNoteId && notes.length > 0 && (
-            <Editor currentNote={currentNote} updateNote={updateNote} />
-          )}
+          <Editor currentNote={currentNote} updateNote={updateNote} />
         </Split>
       ) : (
         <div className="no-notes">
