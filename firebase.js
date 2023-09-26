@@ -16,5 +16,5 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const notesCollection = collection(db, "notes");
-const analytics = getAnalytics(app);
+export  const notesCollection = collection(db, "notes");
+export const analytics = getAnalytics(app);

@@ -3,6 +3,8 @@ import Editor from "./Components/Editor";
 import Split from "react-split";
 import { nanoid } from "nanoid";
 import { useEffect, useState } from "react";
+import { onSnapshot } from "firebase/firestore";
+import { notesCollection } from "../firebase";
 import "./App.css";
 
 export default function App() {
@@ -14,8 +16,12 @@ export default function App() {
     notes.find((note) => note.id === currentNoteId) || notes[0];
 
   useEffect(() => {
-    localStorage.setItem("mynotes", JSON.stringify(notes));
-  }, [notes]);
+    const unsubscribe = onSnapshot(notesCollection, function (snapshot) {
+      // Sync up our local notes array with the snapshot data
+      console.log("THINGS ARE CHANGING!");
+    });
+    return unsubscribe;
+  }, []);
 
   function deleteNote(e, noteId) {
     e.stopPropagation();
