@@ -8,17 +8,21 @@ import { notesCollection } from "../firebase";
 import "./App.css";
 
 export default function App() {
-  const [notes, setNotes] = useState(
-    () => JSON.parse(localStorage.getItem("mynotes")) || [] //lazy state, only initialized once, and not on every app rerender
-  );
+  const [notes, setNotes] = useState([]);
+
   const [currentNoteId, setCurrentNoteId] = useState(notes[0]?.id || "");
+  
   const currentNote =
     notes.find((note) => note.id === currentNoteId) || notes[0];
 
   useEffect(() => {
     const unsubscribe = onSnapshot(notesCollection, function (snapshot) {
       // Sync up our local notes array with the snapshot data
-      console.log("THINGS ARE CHANGING!");
+      const notesArr = snapshot.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+      setNotes(notesArr);
     });
     return unsubscribe;
   }, []);
